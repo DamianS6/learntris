@@ -7,6 +7,7 @@ class Tetris:
 		self.matrix = matrix
 		self.score = score
 		self.cleared_lines = cleared_lines
+		self.active_tetramino, self.tetramino_I, self.tetramino_O = None, None, None
 
 	def set_matrix(self):
 		self.matrix = ''
@@ -18,7 +19,7 @@ class Tetris:
 			print(self.matrix.rstrip())  # remove last newline character
 		else:
 			self.matrix += f"{'. ' * 10}\n" * 22
-			print(self.matrix)
+			print(self.matrix.rstrip())
 
 	def clear_matrix(self):
 		self.matrix = f"{'. ' * 10}\n" * 22
@@ -36,8 +37,9 @@ class Tetris:
 		Increment score and cleared lines.
 		"""
 		# TODO: Instead of replacing whole matrix it would be better to replace
-		# only rows - requires creating new separate type (row) and changing
-		# the way in which the matrix is created.
+		#  only rows - requires creating new separate type (row) and changing
+		#  the way in which the matrix is created (most likely with new classes
+		#  and methods).
 		rows = self.matrix.split('\n')
 		self.matrix = ''
 		for i in range(22):
@@ -48,54 +50,47 @@ class Tetris:
 			self.matrix += f'{rows[i]}\n'
 		return self.matrix
 
+	def draw_tetramino_I(self):
+		self.tetramino_I = 'c c c c'
+		self.active_tetramino = self.tetramino_I
 
-answer = input()
+	def draw_tetramino_O(self):
+		self.tetramino_O = 'y y\ny y'
+		self.active_tetramino = self.tetramino_O
+
+	def display_active_tetramino(self):
+		if self.active_tetramino == self.tetramino_I:
+			print(f"{'. ' * 4}\n"
+			      f"{self.active_tetramino}\n"
+			      f"{'. ' * 4}\n"
+			      f"{'. ' * 4}")
+		elif self.active_tetramino == self.tetramino_O:
+			print(self.tetramino_O)
+
 
 tetris = Tetris()
-while answer != 'q':
-	if answer == 'p':  # print matrix
+option = input()
+
+while option != 'q':
+	if option == 'p':
 		tetris.print_matrix()
-	elif answer == 'g':  # set the given matrix
+	elif option == 'g':
 		tetris.set_matrix()
-	elif answer == 'c':  # clear the matrix
+	elif option == 'c':
 		tetris.clear_matrix()
-	elif answer == '?s':
+	elif option == '?s':
 		tetris.show_score()
-	elif answer == '?n':
+	elif option == '?n':
 		tetris.show_cleared_lines()
-	elif answer == 's':
+	elif option == 's':
 		tetris.check_for_full_rows()
-	answer = input()
-
-
-'''matrix = ''
-score = 0
-cleared_lines = 0
-answer = input()
-
-while answer != 'q':
-	if answer == 'p':  # print matrix
-		if matrix:
-			print(matrix)
-		else:
-			for i in range(22):
-				for x in range(10):
-					matrix += '. '
-				matrix += '\n'
-			print(matrix)
-	elif answer == 'g':  # set the given matrix
-		matrix = ''
-		for i in range(22):
-			matrix += input()
-			matrix += '\n'
-	elif answer == 'c':  # clear the matrix
-		matrix = ''
-		for i in range(22):
-			for x in range(10):
-				matrix += '. '
-			matrix += '\n'
-	elif answer == '?s':
-		print(score)
-	elif answer == '?n':
-		print(cleared_lines)
-	answer = input()'''
+	# TODO: To shorten the code here, replace all below with one method
+	#  (draw tetramino), transfer input to that method in the class
+	#  and choose there what to draw.
+	elif option == 'I':
+		tetris.draw_tetramino_I()
+	elif option == 'O':
+		tetris.draw_tetramino_O()
+	elif option == 't':
+		tetris.display_active_tetramino()
+	option = input()
