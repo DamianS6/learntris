@@ -7,7 +7,8 @@ class Tetris:
 		self.matrix = matrix
 		self.score = score
 		self.cleared_lines = cleared_lines
-		self.active_tetramino, self.tetramino_I, self.tetramino_O = None, None, None
+		self.active_tetramino, self.tetramino_I, self.tetramino_O, self.tetramino_Z \
+			= None, None, None, None
 
 	def set_matrix(self):
 		self.matrix = ''
@@ -50,47 +51,93 @@ class Tetris:
 			self.matrix += f'{rows[i]}\n'
 		return self.matrix
 
-	def draw_tetramino_I(self):
+	def draw_I(self):
 		self.tetramino_I = 'c c c c'
 		self.active_tetramino = self.tetramino_I
 
-	def draw_tetramino_O(self):
+	def draw_O(self):
 		self.tetramino_O = 'y y\ny y'
 		self.active_tetramino = self.tetramino_O
 
+	def draw_Z(self):
+		self.tetramino_Z = 'r r .\n. r r'
+		self.active_tetramino = self.tetramino_Z
+
 	def display_active_tetramino(self):
-		if self.active_tetramino == self.tetramino_I:
+		if self.active_tetramino is None:
+			pass
+		elif self.active_tetramino == self.tetramino_I:
 			print(f"{'. ' * 4}\n"
 			      f"{self.active_tetramino}\n"
 			      f"{'. ' * 4}\n"
 			      f"{'. ' * 4}")
 		elif self.active_tetramino == self.tetramino_O:
 			print(self.tetramino_O)
+		elif self.active_tetramino == self.tetramino_Z:
+			print(f'{self.tetramino_Z}\n. . .')
 
 
 tetris = Tetris()
-option = input()
 
-while option != 'q':
-	if option == 'p':
-		tetris.print_matrix()
-	elif option == 'g':
-		tetris.set_matrix()
-	elif option == 'c':
-		tetris.clear_matrix()
-	elif option == '?s':
-		tetris.show_score()
-	elif option == '?n':
-		tetris.show_cleared_lines()
-	elif option == 's':
-		tetris.check_for_full_rows()
-	# TODO: To shorten the code here, replace all below with one method
-	#  (draw tetramino), transfer input to that method in the class
-	#  and choose there what to draw.
-	elif option == 'I':
-		tetris.draw_tetramino_I()
-	elif option == 'O':
-		tetris.draw_tetramino_O()
-	elif option == 't':
-		tetris.display_active_tetramino()
-	option = input()
+
+# TODO: Put together two parts of this function to make it way shorter.
+def choose_option(answer):
+	if len(answer) > 2:
+		answer_list = answer.split(' ')
+		for i in range(len(answer_list)):
+			option = answer_list[i]
+			if option == 'q':
+				return None
+			elif option == 'p':
+				tetris.print_matrix()
+			elif option == 'g':
+				tetris.set_matrix()
+			elif option == 'c':
+				tetris.clear_matrix()
+			elif option == '?s':
+				tetris.show_score()
+			elif option == '?n':
+				tetris.show_cleared_lines()
+			elif option == 's':
+				tetris.check_for_full_rows()
+			# TODO: To shorten the code here, replace all below with one method
+			#  (draw tetramino), transfer input to that method in the class
+			#  and choose there what to draw.
+			elif option == 'I':
+				tetris.draw_I()
+			elif option == 'O':
+				tetris.draw_O()
+			elif option == 'Z':
+				tetris.draw_Z()
+			elif option == 't':
+				tetris.display_active_tetramino()
+	else:
+		if answer == 'q':
+			return None
+		elif answer == 'p':
+			tetris.print_matrix()
+		elif answer == 'g':
+			tetris.set_matrix()
+		elif answer == 'c':
+			tetris.clear_matrix()
+		elif answer == '?s':
+			tetris.show_score()
+		elif answer == '?n':
+			tetris.show_cleared_lines()
+		elif answer == 's':
+			tetris.check_for_full_rows()
+		# TODO: To shorten the code here, replace all below with one method
+		#  (draw tetramino), transfer input to that method in the class
+		#  and choose there what to draw.
+		elif answer == 'I':
+			tetris.draw_I()
+		elif answer == 'O':
+			tetris.draw_O()
+		elif answer == 'Z':
+			tetris.draw_Z()
+		elif answer == 't':
+			tetris.display_active_tetramino()
+		choose_option(input())
+
+
+choose_option(input())
