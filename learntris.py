@@ -7,8 +7,10 @@ class Tetris:
 		self.matrix = matrix
 		self.score = score
 		self.cleared_lines = cleared_lines
-		self.active_tetramino, self.tetramino_I, self.tetramino_O, self.tetramino_Z \
-			= None, None, None, None
+		self.active_tetramino, self.tetramino_I, self.tetramino_O,\
+		self.tetramino_Z, self.tetramino_S, self.tetramino_J, self.tetramino_L,\
+		self.tetramino_T\
+			= [None] * 8
 
 	def set_matrix(self):
 		self.matrix = ''
@@ -63,6 +65,22 @@ class Tetris:
 		self.tetramino_Z = 'r r .\n. r r'
 		self.active_tetramino = self.tetramino_Z
 
+	def draw_S(self):
+		self.tetramino_S = '. g g\ng g .'
+		self.active_tetramino = self.tetramino_S
+
+	def draw_J(self):
+		self.tetramino_J = 'b . .\nb b b'
+		self.active_tetramino = self.tetramino_J
+
+	def draw_L(self):
+		self.tetramino_L = '. . o\no o o'
+		self.active_tetramino = self.tetramino_L
+
+	def draw_T(self):
+		self.tetramino_T = '. m .\nm m m'
+		self.active_tetramino = self.tetramino_T
+
 	def display_active_tetramino(self):
 		if self.active_tetramino is None:
 			pass
@@ -75,6 +93,14 @@ class Tetris:
 			print(self.tetramino_O)
 		elif self.active_tetramino == self.tetramino_Z:
 			print(f'{self.tetramino_Z}\n. . .')
+		elif self.active_tetramino == self.tetramino_S:
+			print(f'{self.tetramino_S}\n. . .')
+		elif self.active_tetramino == self.tetramino_J:
+			print(f'{self.tetramino_J}\n. . .')
+		elif self.active_tetramino == self.tetramino_L:
+			print(f'{self.tetramino_L}\n. . .')
+		elif self.active_tetramino == self.tetramino_T:
+			print(f'{self.tetramino_T}\n. . .')
 
 
 tetris = Tetris()
@@ -109,6 +135,14 @@ def choose_option(answer):
 				tetris.draw_O()
 			elif option == 'Z':
 				tetris.draw_Z()
+			elif option == 'S':
+				tetris.draw_S()
+			elif option == 'J':
+				tetris.draw_J()
+			elif option == 'L':
+				tetris.draw_L()
+			elif option == 'T':
+				tetris.draw_T()
 			elif option == 't':
 				tetris.display_active_tetramino()
 	else:
@@ -135,6 +169,14 @@ def choose_option(answer):
 			tetris.draw_O()
 		elif answer == 'Z':
 			tetris.draw_Z()
+		elif answer == 'S':
+			tetris.draw_S()
+		elif answer == 'J':
+			tetris.draw_J()
+		elif answer == 'L':
+			tetris.draw_L()
+		elif answer == 'T':
+			tetris.draw_T()
 		elif answer == 't':
 			tetris.display_active_tetramino()
 		choose_option(input())
