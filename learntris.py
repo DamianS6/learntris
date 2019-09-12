@@ -72,7 +72,10 @@ class Tetris:
 			tetris.draw_T()
 
 	def draw_I(self):
-		self.tetramino_I = 'c c c c'
+		self.tetramino_I = (f"{'. ' * 4}\n"
+			      f"c c c c\n"
+			      f"{'. ' * 4}\n"
+			      f"{'. ' * 4}")
 		self.active_tetramino = self.tetramino_I
 
 	def draw_O(self):
@@ -103,10 +106,7 @@ class Tetris:
 		if self.active_tetramino is None:
 			pass
 		elif self.active_tetramino == self.tetramino_I:
-			print(f"{'. ' * 4}\n"
-			      f"{self.active_tetramino}\n"
-			      f"{'. ' * 4}\n"
-			      f"{'. ' * 4}")
+			print(self.tetramino_I)
 		elif self.active_tetramino == self.tetramino_O:
 			print(self.tetramino_O)
 		elif self.active_tetramino == self.tetramino_Z:
@@ -119,12 +119,25 @@ class Tetris:
 			print(f'{self.tetramino_L}\n. . .')
 		elif self.active_tetramino == self.tetramino_T:
 			print(f'{self.tetramino_T}\n. . .')
+		else:
+			print(self.active_tetramino)
+
+	def rotate_active_tetramino(self, count):
+		if count == 0:
+			self.active_tetramino = ('. . c .\n' * 4).rstrip()
+		elif count == 1:
+			self.active_tetramino = ('. . . .\n' * 2 + 'c c c c\n' + '. . . .').rstrip()
+		elif count == 2:
+			self.active_tetramino = ('. c . .\n' * 4).rstrip()
+		elif count == 3:
+			self.active_tetramino = ('. . . .\n' + 'c c c c\n' + '. . . .\n' * 2).rstrip()
+		count += 1
 
 
 tetris = Tetris()
 
 
-def choose_option(option, count=0):
+def choose_option(option, count):
 	if option == 'q':
 		sys.exit()
 	elif option == 'p':
@@ -143,17 +156,20 @@ def choose_option(option, count=0):
 		tetris.draw_tetraminio(option)
 	elif option == 't':
 		tetris.display_active_tetramino()
+	elif option == ')':
+		tetris.rotate_active_tetramino(count)
 
 
-def choose_option_length(answer):
+def choose_option_length(answer, count):
 	if len(answer) > 2:
 		answer_list = answer.split(' ')
 		for i in range(len(answer_list)):
 			option = answer_list[i]
-			choose_option(option)
+			choose_option(option, count)
 	else:
-		choose_option(answer)
-	choose_option_length(input())
+		choose_option(answer, count)
+	count += 1
+	choose_option_length(input(), count)
 
 
-choose_option_length(input())
+choose_option_length(input(), 0)
