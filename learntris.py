@@ -29,6 +29,8 @@ def choose_option(option):
 		sys.exit()
 	elif option == 'p':
 		tetris.print_matrix()
+	elif option == 'P':
+		tetris.print_matrix_with_tetramino()
 	elif option == 'g':
 		tetris.set_matrix()
 	elif option == 'c':
@@ -51,7 +53,7 @@ def choose_option(option):
 
 def choose_option_length(answer):
 	if len(answer) > 2:
-		answer_list = answer.split(' ')
+		answer_list = list(answer)
 		for i in range(len(answer_list)):
 			option = answer_list[i]
 			choose_option(option)
