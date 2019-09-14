@@ -9,9 +9,9 @@ class Tetris:
 		self.matrix = None
 		self.score = 0
 		self.cleared_lines = 0
-		self.matrix_4x4 = [['.', '.', '.', '.'] for __ in range(4)]  # For I tetramino
-		self.matrix_3x3 = [['.', '.', '.'] for __ in range(3)]  # For most tetraminos
-		self.replace = 0  # Variable to move tetraminos easier
+		self.matrix_4x4 = [['.', '.', '.', '.'] for __ in range(4)]  # For I tetramino.
+		self.matrix_3x3 = [['.', '.', '.'] for __ in range(3)]  # For most tetraminos.
+		self.horizontal, self.vertical = 0, 0  # Variables for drawing tetraminos.
 		self.tetramino_Z, self. tetramino_I, self.tetramino_O, self.tetramino_J, \
 		self.tetramino_L, self.tetramino_S, self.tetramino_T, self.active_tetramino =\
 			[None] * 8
@@ -54,7 +54,7 @@ class Tetris:
 				self.cleared_lines += 1
 
 	# TODO: Maybe write one class with inheritance for all tetraminos?
-	#  Not sure if it would make any sense here.
+	#  However not sure if it makes any sense here.
 	def draw_I(self):
 		self.tetramino_I = self.matrix_4x4
 		self.tetramino_I[1] = ['C', 'C', 'C', 'C']
@@ -90,11 +90,12 @@ class Tetris:
 		self.active_tetramino = self.tetramino_T
 
 	def print_matrix_with_tetramino(self):
-		tetra_len = len(self.active_tetramino)  # length of tetramino's matrix
-		self.replace += int((10 - tetra_len)/2)  # place in row from which we draw tetramino
+		tetra_len = len(self.active_tetramino)  # Length of tetramino's matrix.
+		self.horizontal += int((10 - tetra_len)/2)
+		h, v = self.horizontal, self.vertical
 		for i in range(tetra_len):
-			# in every row's middle replace dots with tetramino's letters
-			self.matrix[i][self.replace:self.replace+tetra_len] = self.active_tetramino[i]
+			# In every row's middle replace dots with tetramino's letters.
+			self.matrix[i+v][h:h+tetra_len] = self.active_tetramino[i]
 		Tetris.print_matrix(self)
 
 	def display_active_tetramino(self):
@@ -109,11 +110,17 @@ class Tetris:
 
 	def nudge_left(self):
 		"""Draw tetramino one place to the left..."""
-		self.replace -= 1
+		if self.horizontal > -3:  # If it doesn't hit left side of matrix yet.
+			self.horizontal -= 1
+		else:
+			pass
 
 	def nudge_right(self):
 		"""...and one place to the right."""
-		self.replace += 1
+		self.horizontal += 1
 
 	def nudge_down(self):
-		pass
+		self.vertical += 1
+
+	def place_left(self):
+		self.horizontal = -3

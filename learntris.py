@@ -47,12 +47,14 @@ def choose_option(option):
 		tetris.display_active_tetramino()
 	elif option == ')':
 		tetris.rotate_clockwise()
-	elif option == '<':
-		tetris.nudge_left()
 	elif option == '>':
 		tetris.nudge_right()
 	elif option == 'v':
 		tetris.nudge_down()
+	elif option >= '<<<':
+		tetris.place_left()
+	elif option == '<':
+		tetris.nudge_left()
 	elif option == ';':
 		print('')
 
