@@ -47,20 +47,20 @@ def choose_option(option):
 		tetris.display_active_tetramino()
 	elif option == ')':
 		tetris.rotate_clockwise()
+	elif option == '(':
+		tetris.rotate_counterclockwise()
+	elif option == '<':
+		tetris.nudge_left()
 	elif option == '>':
 		tetris.nudge_right()
 	elif option == 'v':
 		tetris.nudge_down()
-	elif option >= '<<<':
-		tetris.place_left()
-	elif option == '<':
-		tetris.nudge_left()
 	elif option == ';':
 		print('')
 
 
 def choose_option_length(answer):
-	if len(answer) > 2:
+	if len(answer) > 1 and answer[0] != '?':
 		answer_list = list(answer)
 		for i in range(len(answer_list)):
 			option = answer_list[i]

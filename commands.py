@@ -6,12 +6,14 @@
 class Tetris:
 
 	def __init__(self):
-		self.matrix = None
-		self.score = 0
-		self.cleared_lines = 0
+		self.matrix = [['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
+		               for __ in range(22)]
 		self.matrix_4x4 = [['.', '.', '.', '.'] for __ in range(4)]  # For I tetramino.
 		self.matrix_3x3 = [['.', '.', '.'] for __ in range(3)]  # For most tetraminos.
-		self.horizontal, self.vertical = 0, 0  # Variables for drawing tetraminos.
+
+		self.score, self.cleared_lines = 0, 0
+		self.horizontal, self.vertical = 0, 0  # Tetraminos position variables.
+
 		self.tetramino_Z, self. tetramino_I, self.tetramino_O, self.tetramino_J, \
 		self.tetramino_L, self.tetramino_S, self.tetramino_T, self.active_tetramino =\
 			[None] * 8
@@ -19,7 +21,7 @@ class Tetris:
 	def print_matrix(self):
 		if self.matrix:
 			for i in range(22):
-				# No nested comprehension to avoid adding \n manually.
+				# No nested comprehension to avoid adding newlines as list items.
 				print(' '.join(d for d in self.matrix[i]).rstrip())
 		else:
 			self.matrix = [['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
@@ -59,43 +61,62 @@ class Tetris:
 		self.tetramino_I = self.matrix_4x4
 		self.tetramino_I[1] = ['C', 'C', 'C', 'C']
 		self.active_tetramino = self.tetramino_I
+		self.horizontal = 3
 
 	def draw_O(self):
-		self.tetramino_O = [['Y', 'Y']]*2
+		self.tetramino_O = [['Y', 'Y']] * 2
 		self.active_tetramino = self.tetramino_O
+		self.horizontal = 4
 
 	def draw_Z(self):
 		self.tetramino_Z = self.matrix_3x3
 		self.tetramino_Z[0][:2], self.tetramino_Z[1][1:3] = ('R', 'R'), ('R', 'R')
 		self.active_tetramino = self.tetramino_Z
+		self.horizontal = 3
 
 	def draw_S(self):
 		self.tetramino_S = self.matrix_3x3
 		self.tetramino_S[0][1:3], self.tetramino_S[1][:2] = ('G', 'G'), ('G', 'G')
 		self.active_tetramino = self.tetramino_S
+		self.horizontal = 3
 
 	def draw_J(self):
 		self.tetramino_J = self.matrix_3x3
 		self.tetramino_J[0][0], self.tetramino_J[1][:3] = 'B', ('B', 'B', 'B')
 		self.active_tetramino = self.tetramino_J
+		self.horizontal = 3
 
 	def draw_L(self):
 		self.tetramino_L = self.matrix_3x3
 		self.tetramino_L[0][2], self.tetramino_L[1][:3] = 'O', ('O', 'O', 'O')
 		self.active_tetramino = self.tetramino_L
+		self.horizontal = 3
 
 	def draw_T(self):
 		self.tetramino_T = self.matrix_3x3
 		self.tetramino_T[0][1], self.tetramino_T[1][:3] = 'M', ('M', 'M', 'M')
 		self.active_tetramino = self.tetramino_T
+		self.horizontal = 3
+
+	def active_tetramino_length(self):
+		for row in self.active_tetramino:
+			count = 0
+			for item in row:
+				count += 1 if item != '.' else 0
+			if count >= 2:
+				return count
 
 	def print_matrix_with_tetramino(self):
+		Tetris.clear_matrix(self)
 		tetra_len = len(self.active_tetramino)  # Length of tetramino's matrix.
-		self.horizontal += int((10 - tetra_len)/2)
 		h, v = self.horizontal, self.vertical
 		for i in range(tetra_len):
 			# In every row's middle replace dots with tetramino's letters.
-			self.matrix[i+v][h:h+tetra_len] = self.active_tetramino[i]
+			if i+v < 22:
+				self.matrix[i+v][h:h+tetra_len] = self.active_tetramino[i]
+				# Delete any additional items in row if they somehow happen to exist.
+				if len(self.matrix[i+v]) > 10:
+					del self.matrix[i+v][-1]
 		Tetris.print_matrix(self)
 
 	def display_active_tetramino(self):
@@ -108,19 +129,19 @@ class Tetris:
 		"""
 		self.active_tetramino = list(zip(*self.active_tetramino[::-1]))
 
+	def rotate_counterclockwise(self):
+		self.active_tetramino = list(reversed(list(zip(*self.active_tetramino))))
+
 	def nudge_left(self):
 		"""Draw tetramino one place to the left..."""
-		if self.horizontal > -3:  # If it doesn't hit left side of matrix yet.
+		if self.horizontal > 0:  # If it doesn't hit left side of matrix yet.
 			self.horizontal -= 1
-		else:
-			pass
 
 	def nudge_right(self):
 		"""...and one place to the right."""
-		self.horizontal += 1
+		if self.horizontal + Tetris.active_tetramino_length(self) <= 9:
+			self.horizontal += 1
 
 	def nudge_down(self):
-		self.vertical += 1
-
-	def place_left(self):
-		self.horizontal = -3
+		if self.vertical < 20:
+			self.vertical += 1
