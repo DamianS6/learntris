@@ -18,16 +18,33 @@ class Tetris:
 		self.tetramino_L, self.tetramino_S, self.tetramino_T, self.active_tetramino =\
 			[None] * 8
 
-	def print_matrix(self):
-		if self.matrix:
-			for i in range(22):
-				# No nested comprehension to avoid adding newlines as list items.
-				print(' '.join(d for d in self.matrix[i]).rstrip())
+	def prepare_matrix(self, option):
+		if self.active_tetramino:
+			Tetris.clear_matrix(self)
+			tetra_len = len(self.active_tetramino)  # Length of tetramino's matrix.
+			h, v = self.horizontal, self.vertical
+			for i in range(tetra_len):
+				# In every row's middle replace dots with tetramino's letters.
+				if i + v < 22:
+					self.matrix[i + v][h:h + tetra_len] = self.active_tetramino[i]
+					# Delete any additional items in row if they somehow happen to exist.
+					if len(self.matrix[i + v]) > 10:
+						del self.matrix[i + v][-1]
+			Tetris.print_matrix(self, option)
+		elif self.matrix:
+			Tetris.print_matrix(self, option)
 		else:
 			self.matrix = [['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
 			               for __ in range(22)]
-			for i in range(22):
+			Tetris.print_matrix(self, option)
+
+	def print_matrix(self, option):
+		for i in range(22):
+			# No nested comprehension to avoid adding newlines as list items.
+			if option == 'up':
 				print(' '.join(d for d in self.matrix[i]).rstrip())
+			else:
+				print(' '.join(d for d in self.matrix[i]).rstrip().lower())
 
 	def set_matrix(self):
 		self.matrix = []
@@ -57,6 +74,7 @@ class Tetris:
 
 	# TODO: Maybe write one class with inheritance for all tetraminos?
 	#  However not sure if it makes any sense here.
+
 	def draw_I(self):
 		self.tetramino_I = self.matrix_4x4
 		self.tetramino_I[1] = ['C', 'C', 'C', 'C']
@@ -106,18 +124,12 @@ class Tetris:
 			if count >= 2:
 				return count
 
-	def print_matrix_with_tetramino(self):
-		Tetris.clear_matrix(self)
-		tetra_len = len(self.active_tetramino)  # Length of tetramino's matrix.
-		h, v = self.horizontal, self.vertical
-		for i in range(tetra_len):
-			# In every row's middle replace dots with tetramino's letters.
-			if i+v < 22:
-				self.matrix[i+v][h:h+tetra_len] = self.active_tetramino[i]
-				# Delete any additional items in row if they somehow happen to exist.
-				if len(self.matrix[i+v]) > 10:
-					del self.matrix[i+v][-1]
-		Tetris.print_matrix(self)
+	def active_tetramino_height(self):
+		count = 0
+		for row in self.active_tetramino:
+			if row != ['.'] * len(self.active_tetramino):
+				count += 1
+		return count
 
 	def display_active_tetramino(self):
 		for i in range(len(self.active_tetramino)):
@@ -145,3 +157,6 @@ class Tetris:
 	def nudge_down(self):
 		if self.vertical < 20:
 			self.vertical += 1
+
+	def hard_drop(self):
+		self.vertical = 22 - Tetris.active_tetramino_height(self)

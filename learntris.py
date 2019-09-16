@@ -28,9 +28,9 @@ def choose_option(option):
 	if option == 'q':
 		sys.exit()
 	elif option == 'p':
-		tetris.print_matrix()
+		tetris.prepare_matrix('low')
 	elif option == 'P':
-		tetris.print_matrix_with_tetramino()
+		tetris.prepare_matrix('up')
 	elif option == 'g':
 		tetris.set_matrix()
 	elif option == 'c':
@@ -41,8 +41,6 @@ def choose_option(option):
 		tetris.show_cleared_lines()
 	elif option == 's':
 		tetris.check_for_full_rows()
-	elif option.isupper():
-		draw_tetraminio(option)
 	elif option == 't':
 		tetris.display_active_tetramino()
 	elif option == ')':
@@ -55,6 +53,10 @@ def choose_option(option):
 		tetris.nudge_right()
 	elif option == 'v':
 		tetris.nudge_down()
+	elif option == 'V':
+		tetris.hard_drop()
+	elif option.isupper():
+		draw_tetraminio(option)
 	elif option == ';':
 		print('')
 
