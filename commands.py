@@ -7,13 +7,17 @@ class Tetris:
 
 	def __init__(self):
 		self.matrix = [['.']*10 for __ in range(22)]
+		self.matrix_3x3 = [['.']*3 for __ in range(3)]  # Matrix for most tetraminos.
+
+		self.vertical, self.horizontal = 0, 0
 		self.score, self.cleared_lines = 0, 0
-		self.horizontal, self.vertical = 0, 0  # Tetraminos position placeholders.
-		self.active = None  # Placeholder for active tetramino.
+
+		self.tetramino_Z, self.tetramino_I, self.tetramino_O, self.tetramino_J, \
+		self.tetramino_L, self.tetramino_S, self.tetramino_T, self.active = \
+			[None] * 8
 
 	def prepare_matrix(self, option):
 		if self.active:
-			Tetris.clear_matrix(self)
 			Tetris.move_tetramino(self)
 			Tetris.print_matrix(self, option)
 		elif self.matrix:
@@ -37,6 +41,7 @@ class Tetris:
 			self.matrix.append(f'{input()}'.split(' '))
 
 	def clear_matrix(self):
+		self.active = None
 		self.matrix = [['.']*10 for __ in range(22)]
 
 	def show_score(self):
@@ -70,32 +75,52 @@ class Tetris:
 				count += 1
 		return count
 
-	def draw_tetramino(self, option):
-		self.active = [['.']*3 for __ in range(3)]  # Basic matrix.
-		self.horizontal = 3  # Basic place in row to start drawing.
+	def draw_I(self):
+		self.tetramino_I = [['.']*4 for __ in range(4)]
+		self.tetramino_I[1] = ['C']*4
+		self.active = self.tetramino_I
+		self.vertical, self.horizontal = 0, 3
 
-		if option == 'I':
-			self.active = [['.']*4 for __ in range(4)]
-			self.active[1] = ['C']*4
-		elif option == 'O':
-			self.horizontal = 4
-			self.active = [['Y', 'Y']] * 2
-		elif option == 'Z':
-			self.active[0][:2], self.active[1][1:3] = ('R', 'R'), ('R', 'R')
-		elif option == 'S':
-			self.active[0][1:3], self.active[1][:2] = ('G', 'G'), ('G', 'G')
-		elif option == 'J':
-			self.active[0][0], self.active[1][:3] = 'B', 'B'*3
-		elif option == 'L':
-			self.active[0][2], self.active[1][:3] = 'O', 'O'*3
-		elif option == 'T':
-			self.active[0][1], self.active[1][:3] = 'M', 'M'*3
+	def draw_O(self):
+		self.tetramino_O = [['Y', 'Y']] * 2
+		self.active = self.tetramino_O
+		self.vertical, self.horizontal = 0, 4
+
+	def draw_Z(self):
+		self.tetramino_Z = self.matrix_3x3
+		self.tetramino_Z[0][:2], self.tetramino_Z[1][1:3] = ('R', 'R'), ('R', 'R')
+		self.active = self.tetramino_Z
+		self.vertical, self.horizontal = 0, 3
+
+	def draw_S(self):
+		self.tetramino_S = self.matrix_3x3
+		self.tetramino_S[0][1:3], self.tetramino_S[1][:2] = ('G', 'G'), ('G', 'G')
+		self.active = self.tetramino_S
+		self.vertical, self.horizontal = 0, 3
+
+	def draw_J(self):
+		self.tetramino_J = self.matrix_3x3
+		self.tetramino_J[0][0], self.tetramino_J[1][:3] = 'B', 'B'*3
+		self.active = self.tetramino_J
+		self.vertical, self.horizontal = 0, 3
+
+	def draw_L(self):
+		self.tetramino_L = self.matrix_3x3
+		self.tetramino_L[0][2], self.tetramino_L[1][:3] = 'O', 'O'*3
+		self.active = self.tetramino_L
+		self.vertical, self.horizontal = 0, 3
+
+	def draw_T(self):
+		self.tetramino_T = self.matrix_3x3
+		self.tetramino_T[0][1], self.tetramino_T[1][:3] = 'M', 'M'*3
+		self.active = self.tetramino_T
+		self.vertical, self.horizontal = 0, 3
 
 	def move_tetramino(self):
 		tetra_len = len(self.active)  # Length of tetramino's matrix.
 		h, v = self.horizontal, self.vertical
 		for i in range(tetra_len):
-			# In every row's middle replace dots with tetramino's letters.
+			# Replace dots with tetramino's letters.
 			if i + v < 22:
 				self.matrix[i+v][h: h+tetra_len] = self.active[i]
 				# Delete any additional items in row if they somehow happen to exist.
@@ -126,9 +151,9 @@ class Tetris:
 			self.horizontal += 1
 
 	def nudge_down(self):
-		if self.vertical < 20:
+		if self.vertical < 22 - Tetris.active_tetramino_height(self):
 			self.vertical += 1
 
 	def hard_drop(self):
 		for i in range(22 - Tetris.active_tetramino_height(self)):
-			self.vertical += 1
+			Tetris.nudge_down(self)

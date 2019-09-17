@@ -7,6 +7,23 @@ from commands import Tetris
 tetris = Tetris()
 
 
+def draw_tetraminio(kind):
+	if kind == 'I':
+		tetris.draw_I()
+	elif kind == 'O':
+		tetris.draw_O()
+	elif kind == 'Z':
+		tetris.draw_Z()
+	elif kind == 'S':
+		tetris.draw_S()
+	elif kind == 'J':
+		tetris.draw_J()
+	elif kind == 'L':
+		tetris.draw_L()
+	elif kind == 'T':
+		tetris.draw_T()
+
+
 def choose_option(option):
 	if option == 'q':
 		sys.exit()
@@ -37,7 +54,7 @@ def choose_option(option):
 	elif option == 'V':
 		tetris.hard_drop()
 	elif option.isupper():
-		tetris.draw_tetramino(option)
+		draw_tetraminio(option)
 	elif option == ';':
 		print('')
 
