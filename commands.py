@@ -2,6 +2,14 @@
 
 # TODO: Split Tetris class into two (Matrix and Tetramino?) as it's getting long.
 
+# TODO: Fix moving tetramino - it should move only letters, not whole matrix
+#  and automatically remove past trace. Still it needs small matrix to rotate
+#  and display separately.
+
+# TODO: Save matrix with dropped tetramino.
+
+# TODO: Just stop dropping tetramino if next row is empty.
+
 
 class Tetris:
 
@@ -41,7 +49,6 @@ class Tetris:
 			self.matrix.append(f'{input()}'.split(' '))
 
 	def clear_matrix(self):
-		self.active = None
 		self.matrix = [['.']*10 for __ in range(22)]
 
 	def show_score(self):
@@ -73,6 +80,15 @@ class Tetris:
 		for row in self.active:
 			if row != ['.'] * len(self.active):
 				count += 1
+
+		# Deal with I which is drawn not on the top of the matrix which caused problems.
+		if count == 1:
+			count = 0
+			for row in self.active:
+				count += 1
+				if row == ['c'] * 4 or row == ['C'] * 4:
+					break
+
 		return count
 
 	def draw_I(self):
@@ -121,7 +137,7 @@ class Tetris:
 		h, v = self.horizontal, self.vertical
 		for i in range(tetra_len):
 			# Replace dots with tetramino's letters.
-			if i + v < 22:
+			if self.active and h+tetra_len != 11 and i + v < 22:
 				self.matrix[i+v][h: h+tetra_len] = self.active[i]
 				# Delete any additional items in row if they somehow happen to exist.
 				if len(self.matrix[i+v]) > 10:
@@ -133,12 +149,13 @@ class Tetris:
 
 	def rotate_clockwise(self):
 		"""Rotate array by first reversing upper list (matrix),
-		then unpacking it's items (rows) and in the end zipping them.
+		then unpacking it's items (rows), zipping them and in the end
+		returning list of lists again.
 		"""
-		self.active = list(zip(*self.active[::-1]))
+		self.active = [list(a) for a in zip(*self.active[::-1])]
 
 	def rotate_counterclockwise(self):
-		self.active = list(reversed(list(zip(*self.active))))
+		self.active = list(reversed([list(a) for a in zip(*self.active[::-1])]))
 
 	def nudge_left(self):
 		"""Draw tetramino one place to the left (right, down, bottom for next functions).
@@ -155,5 +172,5 @@ class Tetris:
 			self.vertical += 1
 
 	def hard_drop(self):
-		for i in range(22 - Tetris.active_tetramino_height(self)):
+		while self.vertical < 22 - Tetris.active_tetramino_height(self):
 			Tetris.nudge_down(self)
