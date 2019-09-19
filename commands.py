@@ -3,21 +3,21 @@
 # TODO: Split Tetris class into two (Matrix and Tetramino?) as it's getting long.
 
 # TODO: Fix moving tetramino - it should move only letters, not whole matrix
-#  and automatically remove past trace. Still it needs small matrix to rotate
-#  and display separately.
+#  and automatically remove past trace no matter of distance moved.
+#  Still it needs small matrix to rotate and display separately.
 
 # TODO: Save matrix with dropped tetramino.
 
-# TODO: Just stop dropping tetramino if next row is empty.
+# TODO: Just stop moving tetramino if next row/column is empty.
 
 
 class Tetris:
 
 	def __init__(self):
 		self.matrix = [['.']*10 for __ in range(22)]
-		self.matrix_3x3 = [['.']*3 for __ in range(3)]  # Matrix for most tetraminos.
 
 		self.vertical, self.horizontal = 0, 0
+		self.horizontal_clear, self.vertical_clear = 0, 0
 		self.score, self.cleared_lines = 0, 0
 
 		self.tetramino_Z, self.tetramino_I, self.tetramino_O, self.tetramino_J, \
@@ -49,6 +49,7 @@ class Tetris:
 			self.matrix.append(f'{input()}'.split(' '))
 
 	def clear_matrix(self):
+		self.active = None
 		self.matrix = [['.']*10 for __ in range(22)]
 
 	def show_score(self):
@@ -103,31 +104,31 @@ class Tetris:
 		self.vertical, self.horizontal = 0, 4
 
 	def draw_Z(self):
-		self.tetramino_Z = self.matrix_3x3
+		self.tetramino_Z = [['.']*3 for __ in range(3)]
 		self.tetramino_Z[0][:2], self.tetramino_Z[1][1:3] = ('R', 'R'), ('R', 'R')
 		self.active = self.tetramino_Z
 		self.vertical, self.horizontal = 0, 3
 
 	def draw_S(self):
-		self.tetramino_S = self.matrix_3x3
+		self.tetramino_S = [['.']*3 for __ in range(3)]
 		self.tetramino_S[0][1:3], self.tetramino_S[1][:2] = ('G', 'G'), ('G', 'G')
 		self.active = self.tetramino_S
 		self.vertical, self.horizontal = 0, 3
 
 	def draw_J(self):
-		self.tetramino_J = self.matrix_3x3
+		self.tetramino_J = [['.']*3 for __ in range(3)]
 		self.tetramino_J[0][0], self.tetramino_J[1][:3] = 'B', 'B'*3
 		self.active = self.tetramino_J
 		self.vertical, self.horizontal = 0, 3
 
 	def draw_L(self):
-		self.tetramino_L = self.matrix_3x3
+		self.tetramino_L = [['.']*3 for __ in range(3)]
 		self.tetramino_L[0][2], self.tetramino_L[1][:3] = 'O', 'O'*3
 		self.active = self.tetramino_L
 		self.vertical, self.horizontal = 0, 3
 
 	def draw_T(self):
-		self.tetramino_T = self.matrix_3x3
+		self.tetramino_T = [['.']*3 for __ in range(3)]
 		self.tetramino_T[0][1], self.tetramino_T[1][:3] = 'M', 'M'*3
 		self.active = self.tetramino_T
 		self.vertical, self.horizontal = 0, 3
@@ -135,13 +136,17 @@ class Tetris:
 	def move_tetramino(self):
 		tetra_len = len(self.active)  # Length of tetramino's matrix.
 		h, v = self.horizontal, self.vertical
+		clear_h, clear_v = self.horizontal_clear, self.vertical_clear
 		for i in range(tetra_len):
 			# Replace dots with tetramino's letters.
-			if self.active and h+tetra_len != 11 and i + v < 22:
+			if self.active and i + v < 22:
 				self.matrix[i+v][h: h+tetra_len] = self.active[i]
+				# Clear the trace.
+				#self.matrix[i+v-clear_v][h+tetra_len-clear_h] = None
 				# Delete any additional items in row if they somehow happen to exist.
 				if len(self.matrix[i+v]) > 10:
 					del self.matrix[i+v][-1]
+		clear_h, clear_v = 0, 0
 
 	def display_active_tetramino(self):
 		for i in range(len(self.active)):
@@ -155,21 +160,24 @@ class Tetris:
 		self.active = [list(a) for a in zip(*self.active[::-1])]
 
 	def rotate_counterclockwise(self):
-		self.active = list(reversed([list(a) for a in zip(*self.active[::-1])]))
+		self.active = list(reversed([list(a) for a in zip(*self.active)]))
 
 	def nudge_left(self):
 		"""Draw tetramino one place to the left (right, down, bottom for next functions).
 		"""
 		if self.horizontal > 0:  # If it doesn't hit left side of matrix yet.
 			self.horizontal -= 1
+			self.horizontal_clear -= 1
 
 	def nudge_right(self):
 		if self.horizontal + Tetris.active_tetramino_length(self) <= 9:
 			self.horizontal += 1
+			self.horizontal_clear += 1
 
 	def nudge_down(self):
 		if self.vertical < 22 - Tetris.active_tetramino_height(self):
 			self.vertical += 1
+			self.vertical_clear += 1
 
 	def hard_drop(self):
 		while self.vertical < 22 - Tetris.active_tetramino_height(self):
